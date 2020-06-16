@@ -1,5 +1,6 @@
 # dgosharding
  Sharding library for DiscordGo.
+ This is an edit of "github.com/jonas747/dshardmanager"
 
 ### Installing
 
