@@ -412,7 +412,7 @@ func (m *SessionManager) GetFullStatus() *Status {
 	if m.GuildCountsFunc != nil {
 		shardGuilds = m.GuildCountsFunc()
 	} else {
-		shardGuilds = m.StdGuildCountsFunc()
+		shardGuilds = m.GuildCount()
 	}
 
 	m.RLock()
