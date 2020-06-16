@@ -1,19 +1,31 @@
 package dgosharding
 
 import (
+	"log"
+	"time"
+
 	"github.com/bwmarrin/discordgo"
 	"github.com/pkg/errors"
 )
 
 // RestartAll restarts all the shard sessions and scales up if needed
 func (m *SessionManager) RestartAll() (err error) {
+	m.StopAll()
 	m.Lock()
-	m.numShards, err = m.GetRecommendedCount()
+	recommended, err := m.GetRecommendedCount()
+	if recommended > m.numShards {
+		m.numShards = recommended
+	}
 	if err != nil {
 		return err
 	}
 	i := 0
 	for _, v := range m.Sessions {
+		if i != 0 {
+			// One identify every 5 seconds
+			time.Sleep(time.Second * 5)
+		}
+		log.Println("Reconnecting")
 		v.ShardCount = m.numShards
 		v.ShardID = i
 		if e := v.Open(); e != nil {
@@ -28,7 +40,12 @@ func (m *SessionManager) RestartAll() (err error) {
 		return
 	}
 	//Do rescale
-	for i < m.numShards {
+	for i <= m.numShards {
+		if i != 0 {
+			// One identify every 5 seconds
+			time.Sleep(time.Second * 5)
+		}
+		log.Println("Reconnecting")
 		m.Sessions = append(m.Sessions, &discordgo.Session{})
 		err := m.initSession(i)
 		if err != nil {
