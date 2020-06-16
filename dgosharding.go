@@ -325,8 +325,8 @@ func (m *SessionManager) statusRoutine() {
 		m.handleError(err, -1, "Failed requesting message history in channel")
 	} else {
 		for _, msg := range msgs {
-			// Uses the bot ID from the bare session
-			if msg.Author.ID == m.bareSession.State.User.ID && len(msg.Embeds) >= 1 {
+			// Dunno our own bot id so best we can do is bot
+			if !msg.Author.Bot || len(msg.Embeds) < 1 {
 				continue
 			}
 
