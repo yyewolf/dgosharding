@@ -3,7 +3,6 @@ package dgosharding
 import (
 	"fmt"
 	"log"
-	"strconv"
 	"sync"
 	"time"
 
@@ -215,31 +214,6 @@ func (m *SessionManager) startSession(shard int) error {
 	m.handleEvent(EventOpen, shard, "")
 
 	return nil
-}
-
-// SessionForGuildS is the same as SessionForGuild but accepts the guildID as a string for convenience
-func (m *SessionManager) SessionForGuildS(guildID string) *discordgo.Session {
-	// Question is, should we really ignore this error?
-	// In reality, the guildID should never be invalid but...
-	parsed, _ := strconv.ParseInt(guildID, 10, 64)
-	return m.SessionForGuild(parsed)
-}
-
-// SessionForGuild returns the session for the specified guild
-func (m *SessionManager) SessionForGuild(guildID int64) *discordgo.Session {
-	// (guild_id >> 22) % num_shards == shard_id
-	// That formula is taken from the sharding issue on the api docs repository on github
-	m.RLock()
-	defer m.RUnlock()
-	shardID := (guildID >> 22) % int64(m.numShards)
-	return m.Sessions[shardID]
-}
-
-// Session retrieves a session from the sessions map, rlocking it in the process
-func (m *SessionManager) Session(shardID int) *discordgo.Session {
-	m.RLock()
-	defer m.RUnlock()
-	return m.Sessions[shardID]
 }
 
 // LogConnectionEventStd is the standard connection event logger, it logs it to whatever log.output is set to.
