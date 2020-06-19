@@ -12,10 +12,7 @@ import (
 func (m *SessionManager) RestartAll() (err error) {
 	m.StopAll()
 	m.Lock()
-	recommended, err := m.GetRecommendedCount()
-	if recommended > m.numShards {
-		m.numShards = recommended
-	}
+	m.numShards = int(float64(m.numShards) * 1.5)
 	if err != nil {
 		return err
 	}
