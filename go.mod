@@ -1,4 +1,4 @@
-module dgosharding
+module github.com/yyewolf/dgosharding
 
 go 1.16
 
