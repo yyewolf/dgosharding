@@ -169,6 +169,23 @@ func (m *SessionManager) Start() error {
 	return nil
 }
 
+// Start starts the shard manager, not opening all gateway connections
+func (m *SessionManager) StartWithoutGateway() error {
+
+	m.Lock()
+	if m.Sessions == nil {
+		m.Unlock()
+		err := m.Init()
+		if err != nil {
+			return err
+		}
+		m.Lock()
+	}
+
+	m.Unlock()
+	return nil
+}
+
 // StopAll stops all the shard sessions and returns the last error that occured
 func (m *SessionManager) StopAll() (err error) {
 	m.Lock()
